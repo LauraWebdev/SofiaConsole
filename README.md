@@ -6,6 +6,7 @@ An easy to use in-game dev console for Godot 4 (C#)
 ## Getting Started
 ### How to install
 - Copy the `addons/sofiaconsole` folder into your project
+- Build your project
 - Enable the plugin
 - Make sure, that `res://addons/sofiaconsole/Console.tscn` is a global autoload with the name `Console`
 
