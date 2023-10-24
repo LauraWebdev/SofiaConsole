@@ -20,13 +20,13 @@ public partial class Console : Node
     
     public bool Open;
 
-    private CanvasLayer _consoleCanvas;
-    private Panel _background;
-    private Button _closeButton;
-    private LineEdit _commandInput;
-    private Button _commandSendButton;
-    private ScrollContainer _historyScrollContainer;
-    private VBoxContainer _historyContent;
+    [Export] private CanvasLayer _consoleCanvas;
+    [Export] private Panel _background;
+    [Export] private Button _closeButton;
+    [Export] private LineEdit _commandInput;
+    [Export] private Button _commandSendButton;
+    [Export] private ScrollContainer _historyScrollContainer;
+    [Export] private VBoxContainer _historyContent;
     
     public override void _EnterTree()
     {
@@ -34,14 +34,6 @@ public partial class Console : Node
         Instance = this;
         
         GD.Print("[SofiaConsole] Initializing");
-
-        _consoleCanvas = GetNode<CanvasLayer>("ConsoleCanvas");
-        _background = GetNode<Panel>("ConsoleCanvas/Background");
-        _closeButton = GetNode<Button>("ConsoleCanvas/Background/Window/Content/Header/HBoxContainer/CloseButton");
-        _historyScrollContainer = GetNode<ScrollContainer>("ConsoleCanvas/Background/Window/Content/History/ScrollContainer");
-        _historyContent = GetNode<VBoxContainer>("ConsoleCanvas/Background/Window/Content/History/ScrollContainer/Content");
-        _commandInput = GetNode<LineEdit>("ConsoleCanvas/Background/Window/Content/Input/HBoxContainer/CommandInput");
-        _commandSendButton = GetNode<Button>("ConsoleCanvas/Background/Window/Content/Input/HBoxContainer/CommandSendButton");
 
         _closeButton.Pressed += () => { SetConsole(false); };
         _commandSendButton.Pressed += () => { ProcessCommand(_commandInput.Text); };

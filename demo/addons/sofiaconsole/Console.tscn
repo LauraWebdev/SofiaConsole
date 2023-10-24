@@ -58,8 +58,15 @@ outline_color = Color(0, 0, 0, 1)
 shadow_size = 5
 shadow_color = Color(0, 0, 0, 1)
 
-[node name="Console" type="Node"]
+[node name="Console" type="Node" node_paths=PackedStringArray("_consoleCanvas", "_background", "_closeButton", "_commandInput", "_commandSendButton", "_historyScrollContainer", "_historyContent")]
 script = ExtResource("1_dw41g")
+_consoleCanvas = NodePath("ConsoleCanvas")
+_background = NodePath("ConsoleCanvas/Background")
+_closeButton = NodePath("ConsoleCanvas/Background/Window/Content/Header/HBoxContainer/CloseButton")
+_commandInput = NodePath("ConsoleCanvas/Background/Window/Content/Input/HBoxContainer/CommandInput")
+_commandSendButton = NodePath("ConsoleCanvas/Background/Window/Content/Input/HBoxContainer/CommandSendButton")
+_historyScrollContainer = NodePath("ConsoleCanvas/Background/Window/Content/History/ScrollContainer")
+_historyContent = NodePath("ConsoleCanvas/Background/Window/Content/History/ScrollContainer/Content")
 
 [node name="ConsoleCanvas" type="CanvasLayer" parent="."]
 layer = 128
