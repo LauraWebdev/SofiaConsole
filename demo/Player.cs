@@ -49,8 +49,6 @@ public partial class Player : RigidBody3D
 
 		if (_noclipOn)
 		{
-			Position += _input * 2f * (float)delta;
-
 			_gdBotSkin.Call("fall");
 		}
 	}
@@ -72,6 +70,11 @@ public partial class Player : RigidBody3D
 		if (lookDirection != Position)
 		{
 			LookAt(lookDirection, Vector3.Up);
+		}
+
+		if (_noclipOn)
+		{
+			Position += _input * 2f * (float)delta;
 		}
 	}
 

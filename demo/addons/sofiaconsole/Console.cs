@@ -16,9 +16,9 @@ public partial class Console : Node
 {
     public static Console Instance;
     public List<ConsoleCommandReference> Commands = new();
-    private List<string> _commandHistory = new();
+    private readonly List<string> _commandHistory = new();
     
-    public bool Open = false;
+    public bool Open;
 
     private CanvasLayer _consoleCanvas;
     private Panel _background;
@@ -30,10 +30,7 @@ public partial class Console : Node
     
     public override void _EnterTree()
     {
-        if (Instance != null)
-        {
-            Instance.Free();
-        }
+        Instance?.Free();
         Instance = this;
         
         GD.Print("[SofiaConsole] Initializing");
@@ -62,48 +59,43 @@ public partial class Console : Node
     {
         base._Input(@event);
 
-        if (@event is InputEventKey eventKey)
+        if (@event is InputEventKey { Pressed: true } eventKey)
         {
-            if (eventKey.Pressed)
+            // Close Console
+            if (Open && eventKey.Keycode == Key.Escape)
             {
-                if (Open && eventKey.Keycode == Key.Escape)
+                SetConsole(false);
+            }
+
+            // Open Console
+            if (eventKey.Keycode == Key.F3)
+            {
+                ToggleConsole();
+            }
+
+            // Press Up to toggle between previous commands
+            if (eventKey.Keycode == Key.Up && _commandInput.HasFocus() && _commandHistory.Count > 0)
+            {
+                var historyIndex = _commandHistory.FindIndex(x => x == _commandInput.Text);
+                if (historyIndex == -1)
                 {
-                    SetConsole(false);
+                    historyIndex = _commandHistory.Count;
+                }
+                
+                if (historyIndex == 0)
+                {
+                    historyIndex = _commandHistory.Count;
                 }
 
-                // Open Console
-                if (eventKey.Keycode == Key.F3)
-                {
-                    ToggleConsole();
-                }
-
-                // Press Up to toggle between previous commands
-                if (eventKey.Keycode == Key.Up && _commandInput.HasFocus() && _commandHistory.Count > 0)
-                {
-                    var historyIndex = _commandHistory.FindIndex(x => x == _commandInput.Text);
-                    if (historyIndex == -1)
-                    {
-                        historyIndex = _commandHistory.Count;
-                    }
-                    
-                    if (historyIndex == 0)
-                    {
-                        historyIndex = _commandHistory.Count;
-                    }
-
-                    _commandInput.Text = _commandHistory[historyIndex - 1];
-                }
+                _commandInput.Text = _commandHistory[historyIndex - 1];
             }
         }
 
-        if (@event is InputEventMouse mouseEvent)
+        if (@event is InputEventMouse mouseEvent && mouseEvent.IsPressed())
         {
-            if (mouseEvent.IsPressed())
-            {
-                // TODO: Check if Mouse is not within Input/Button
-                _commandInput.ReleaseFocus();
-                _commandSendButton.ReleaseFocus();
-            }
+            // TODO: Check if Mouse is not within Input/Button
+            _commandInput.ReleaseFocus();
+            _commandSendButton.ReleaseFocus();
         }
     }
 
@@ -112,7 +104,7 @@ public partial class Console : Node
         SetConsole(!Open);
     }
 
-    public void SetConsole(bool open)
+    private void SetConsole(bool open)
     {
         Open = open;
         
@@ -155,14 +147,14 @@ public partial class Console : Node
         }
 
         // Get Caller for Invoking Method
-        Type type = commandAttribute.Method.DeclaringType ?? null;
+        var type = commandAttribute.Method.DeclaringType;
         if (type == null)
         {
             Print($"Could not execute command: {commandAttribute.Command}", PrintType.Error);
             return;
         }
         
-        object instance = null;
+        object instance;
         if (type.IsSubclassOf(typeof(GodotObject)))
         {
             // This is a Godot Object, find it or create a new instance
@@ -181,8 +173,8 @@ public partial class Console : Node
         }
         
         // Fill parameters
-        ParameterInfo[] paramInfos = commandAttribute.Method.GetParameters();
-        object[] parameters = new object[paramInfos.Length];
+        var paramInfos = commandAttribute.Method.GetParameters();
+        var parameters = new object[paramInfos.Length];
         for (int i = 0; i < paramInfos.Length; i++)
         {
             if (rawCommandSplit.Length > i + 1 && rawCommandSplit[i + 1] != null)
@@ -203,7 +195,7 @@ public partial class Console : Node
     {
         GD.Print("[SofiaConsole] Loading Commands");
         
-        Commands = new();
+        Commands = new List<ConsoleCommandReference>();
 
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
@@ -328,22 +320,8 @@ public partial class Console : Node
         throw new ArgumentException($"Unsupported type: {targetType}");
     }
     
-    public Node FindNodeByType(Node root, Type targetType)
+    private static Node FindNodeByType(Node root, Type targetType)
     {
-        if (root.GetType() == targetType)
-        {
-            return root;
-        }
-
-        foreach (Node child in root.GetChildren())
-        {
-            Node foundNode = FindNodeByType(child, targetType);
-            if (foundNode != null)
-            {
-                return foundNode;
-            }
-        }
-
-        return null;
+        return root.GetType() == targetType ? root : root.GetChildren().Select(child => FindNodeByType(child, targetType)).FirstOrDefault(foundNode => foundNode != null);
     }
 }
