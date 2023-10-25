@@ -4,7 +4,6 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace media.Laura.SofiaConsole;
 
@@ -41,7 +40,7 @@ public partial class Console : Node
         
         LoadCommands();
         
-        Print("[SofiaConsole] Version 1.0.0", PrintType.Success);
+        Print("[SofiaConsole] Version 1.2.0", PrintType.Success);
         Space();
         
         GD.Print("[SofiaConsole] Done");
@@ -60,7 +59,7 @@ public partial class Console : Node
             }
 
             // Open Console
-            if (eventKey.Keycode == Key.F3)
+            if (InputMap.HasAction("toggle_console") && Input.IsActionPressed("toggle_console") || eventKey.Keycode == Key.F3)
             {
                 ToggleConsole();
             }

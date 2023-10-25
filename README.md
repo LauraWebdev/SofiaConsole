@@ -12,6 +12,7 @@ An easy to use in-game dev console for Godot 4 (C#)
 
 ### How to use
 - Press `F3` in-game to open the console
+  - You can create an input action named "toggle_console" to define a custom key/button
 
 ## Commands
 ### How to add commands
@@ -37,8 +38,6 @@ There are a few helper methods your command can call.
 ### Built in commands
 We have created a few default commands that are always available.
 
-- `noclip`
-  - Allows you to move the player without physics
 - `clear`
   - Clears the console history
 - `devcam`
@@ -59,3 +58,6 @@ We have created a few default commands that are always available.
   - Sets the timescale
 - `toggleconsole`
   - Toggles the console
+
+### Demo Project
+This repository contains a demo project that implements a `noclip` console command to showcase the usage of this addon.
