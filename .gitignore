@@ -1,2 +1,17 @@
+demo/.idea/
+
 # Godot 4+ specific ignores
-.godot/
+demo/.godot/
+
+# Godot-specific ignores
+demo/.import/
+demo/export.cfg
+demo/export_presets.cfg
+
+# Imported translations (automatically generated from CSV files)
+demo/*.translation
+
+# Mono-specific ignores
+demo/.mono/
+demo/data_*/
+demo/mono_crash.*.json
